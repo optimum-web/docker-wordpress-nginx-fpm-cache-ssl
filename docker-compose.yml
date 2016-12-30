@@ -14,7 +14,6 @@ wordpress:
   #build: .
   #  For now only manual execution inside docker will install certificates
   #  docker exec your_container  sh /addon/ssl.sh
-  #run: "sh /addon/ssl.sh"
 
   environment:
     SERVER_NAME: demo.loc
