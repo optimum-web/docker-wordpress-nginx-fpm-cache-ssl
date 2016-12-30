@@ -125,7 +125,7 @@ COPY  config/nginx-site-http.conf /etc/nginx/nginx-site-http.conf
 COPY  config/nginx-site-https.conf /etc/nginx/nginx-site-https.conf
 # Default **site** config - HTTP
 # Later if need to enforce SSL, use `nginx-site-http.conf` instead.
-COPY  config/nginx-site-http.conf /etc/nginx/sites-available/default
+COPY  config/nginx-site-https.conf /etc/nginx/sites-available/default
 
 COPY  config/nginx-ssl.conf /etc/nginx/ssl-template.conf
 COPY  config/nginx-restrictions.conf /etc/nginx/restrictions.conf
@@ -216,6 +216,7 @@ COPY bash/ssl-letsencrypt.sh /addon/letsencrypt/ssl-letsencrypt.sh
 
 # Normal SSL related
 COPY bash/ssl.sh /addon/ssl.sh
+RUN chmod 755 /addon/ssl.sh
 
 # Install WP plugins
 COPY bash/wp-install-plugins.sh /addon/wp-install-plugins.sh
@@ -224,10 +225,9 @@ COPY bash/wp-install-plugins.sh /addon/wp-install-plugins.sh
 # ===============================================================================
 # Volume Mounting
 #
-# - Wprdpress webroot
+# - Wordpress webroot
 # - Log
 #
 
-# Mount the volumns
+# Mount the volumes
 VOLUME ["/usr/share/nginx/www", "/var/log"]
-
