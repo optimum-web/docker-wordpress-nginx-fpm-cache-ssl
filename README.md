@@ -48,10 +48,29 @@ When using `docker compose` config file `docker-compose.yml` to build the contai
 The docker compose config file would be like this.
 
 ```
-wordpress:
-  image: cowfox/docker-wordpress-nginx-fpm-cache-ssl
+mysql:
+  image: mysql:5.7
   environment:
-    SERVER_NAME: "example.com"
+    MYSQL_ROOT_PASSWORD: yourpassword
+    MYSQL_DATABASE: wordpress
+    MYSQL_USER: sample
+    MYSQL_PASSWORD: yourpassword
+
+wordpress:
+  image: optimum/wp-nginx-fpm-ssl
+  #build: .
+  #  For now only manual execution inside docker will install certificates
+  #  docker exec your_container  sh /addon/ssl.sh
+
+  environment:
+    SERVER_NAME: demo.loc
+    SSL_TRUSTED_CERT_FILE: /ssl/trust.pem
+    SSL_CERT_KEY_FILE: /ssl/key.pem
+    SSL_CERT_FILE: /ssl/crt.pem
+    DB_HOSTNAME: db
+    DB_DATABASE: wordpress
+    DB_USER: sample
+    DB_PASSWORD: yourpassword
   ports:
     - "80:80"
     - "443:443"
@@ -59,22 +78,14 @@ wordpress:
     # NOTES: Be sure to keep the "alias" as `db`.
     # This alias will be used as "prefix" of **exposed ENV. variables** from DB server.
     - mysql:db
-
-mysql:
-  image: mysql:5.7
-  command:
-    - /local-db.sh
-  environment:
-    MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
-    MYSQL_DATABASE: $DB_DATABASE
-    MYSQL_USER: $DB_USER
-    MYSQL_PASSWORD: $DB_PASSWORD
   volumes:
-    # Workaround script for Mac OSX
-    - ./bash/local-mysql-mac.sh:/local-db.sh
+    - ./ssl:/ssl:ro
 ```
 
 > Please note: when linking the mysql DB, be sure to assign it with an alias **db**, since `init.sh` script uses it to load the **link environment variables**.
+
+IMPORTANT
+> Do not forget to execute command: docker exec your_container  sh /addon/ssl.sh
 
 
 ## Scripts
